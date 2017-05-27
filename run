@@ -1,0 +1,2 @@
+#!/bin/bash
+argus -F /etc/argus-to-sda.conf -e '"O1"'
