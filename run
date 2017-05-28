@@ -1,2 +1,3 @@
 #!/bin/bash
-argus -F /etc/argus-to-sda.conf -e '"O1"'
+ID='"Test"'
+argus -F /etc/argus.conf -e $ID

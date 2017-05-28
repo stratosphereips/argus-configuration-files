@@ -1,28 +1,37 @@
 # Install script for the argus configuration for the Stratosphere Project
 # https://stratosphereips.org
+# Author: Sebastian Garcia. sebastian.garcia@agents.fel.cvut.cz
 
 # If there is a previous argus conf, backup it
 if [ -f /etc/argus.conf ]; then
     echo 'Backing up old argus configuration'
-    mv /etc/argus.conf /etc/argus.$RANDOM.conf.bak
+    sudo mv /etc/argus.conf /etc/argus.$RANDOM.conf.bak
 fi
 echo 'Copying new argus configuration file to /etc'
-cp ./argus-to-sda.conf /etc/argus.conf
+sudo cp ./argus-to-sda.conf /etc/argus.conf
 
-#argus-to-sda.conf
-#argus-to-sda.sh
-#install.sh
-#run
+# Create the argus folder for starting it automatically
+echo 'Creating the /etc/argus folder'
+ARGUSF=/etc/argus
+sudo mkdir $ARGUSF
+sudo cp ./run $ARGUSF
+echo 'Type the id of your argus sensor. Only 4 chars:'
+read ID
+sudo sed -i "s/Test/$ID/" $ARGUSF/run
 
-1. Create a folder in your computer for argus. For example /opt/argus-to-sda/
-2. Copy the file 'argus-to-sda.conf' to /etc as root.
-3. Copy the file 'argus-to-sda.sh' to /etc/init.d/
-4. Copy the file 'run' to the project folder, for example /opt/argus-to-sda/
-5. Make the init script executable if it is not. 
-    chmod 777 /etc/init.d/argus-to-sda.sh
-6. Make a link to start argus when the computer reboots
-    ln -s /etc/init.d/argus-to-sda.sh /etc/rc2.d/S08argus-to-sda.sh
-7. If necesarry, change the id of your organization in the /opt/argus-to-sda/run file. The id should be provided by SDA. Change the parameter -e to '"newid"'.
-8. Start the service
-    /etc/init.d/arugs-to-sda.sh
+# Copy the start script to /etc/init.d
+echo 'Installing the start script in /etc/init.d'
+sudo cp ./argus-to-sda.sh /etc/init.d/
+sudo chmod 755 /etc/init.d/argus-to-sda.sh
+echo 'Making argus start when the rpi starts'
+sudo ln -s /etc/init.d/argus-to-sda.sh /etc/rc2.d/S08argus-to-sda.sh
 
+# Start the service
+echo 'Starting Argus now'
+sudo /etc/init.d/argus-to-sda.sh
+
+echo
+echo "Argus is monitored by supervised and it will respown if killed."
+echo "To stop argus type 'sudo killall -9 supervise; sudo killall -9 argus'"
+echo "To start it again type '/etc/init.d/arugs-to-sda.sh'"
+echo "To change the Argus ID, change it in the file /etc/argus/run, or run install.sh again."

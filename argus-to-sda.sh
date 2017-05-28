@@ -1,2 +1,2 @@
 #!/bin/bash
-supervise ~/argus-server/ &
+supervise /etc/argus/ &
